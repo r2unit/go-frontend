@@ -1,0 +1,42 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "template": "home",
+      "title": "Nerdpitch - Get yourself ready for the cloud for the rest of us nerds",
+      "data": {
+        "showCookiePolicy": true
+      }
+    },
+    {
+      "path": "/contact",
+      "template": "contact",
+      "title": "Contact Us",
+      "data": {
+        "showCookiePolicy": true
+      }
+    },
+    {
+      "path": "/example",
+      "template": "example",
+      "title": "Nerdpitch - Example Page",
+      "data": {
+        "showCookiePolicy": true
+      }
+    },
+    {
+      "path": "/404",
+      "template": "404",
+      "title": "Page Not Found",
+      "data": {}
+    }
+  ],
+  "static": {
+    "path": "/static/",
+    "dir": "assets"
+  },
+  "templates": {
+    "common": "templates/*.html",
+    "pages": "pages/*.html"
+  }
+}
