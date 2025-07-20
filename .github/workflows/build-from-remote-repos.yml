@@ -18,13 +18,13 @@ jobs:
       matrix:
         # Hardcoded list of repositories under the /r2unit/ user to check and build from
         repo: [
-          'frontend-main',
+          'frontend-example',
           'frontend-blog',
           'frontend-docs',
           'frontend-dashboard'
           # Add more repositories as needed
         ]
-      fail-fast: false  # Continue with other repos if one fails
+      fail-fast: true  # Continue with other repos if one fails
     
     # Skip this repository if a specific repo was requested and it's not this one
     if: ${{ !github.event.inputs.specific_repo || github.event.inputs.specific_repo == matrix.repo }}
