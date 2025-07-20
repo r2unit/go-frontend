@@ -114,11 +114,17 @@ This framework is designed to be used in a multi-repository setup:
 
 ### How It Works
 
-When you push to a template repository:
+The GitHub Workflow in the framework repository can run on any branch, but it only processes remote repositories that follow specific patterns:
+
 1. The GitHub Workflow detects if the repository name starts with `frontend-`
-2. If it does, it checks out both the template repository and the framework repository
-3. It combines them into a build directory
-4. It builds a Docker container and pushes it to GitHub Container Registry
+2. If it does, it checks if the repository has either a `master` or `develop` branch
+3. For each existing branch (master/develop), it:
+   - Checks out that specific branch from the template repository
+   - Checks out the framework repository
+   - Combines them into a build directory
+   - Builds a Docker container and pushes it to GitHub Container Registry
+
+This means that even if you push to any branch in the framework repository, the workflow will only build containers from the `master` and `develop` branches of the remote template repositories.
 
 ### Docker Images
 
