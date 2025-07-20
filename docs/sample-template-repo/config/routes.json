@@ -1,0 +1,34 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "template": "home",
+      "title": "Sample Frontend - Home Page",
+      "data": {
+        "showCookiePolicy": true
+      }
+    },
+    {
+      "path": "/about",
+      "template": "about",
+      "title": "About Us",
+      "data": {
+        "showCookiePolicy": true
+      }
+    },
+    {
+      "path": "/404",
+      "template": "404",
+      "title": "Page Not Found",
+      "data": {}
+    }
+  ],
+  "static": {
+    "path": "/static/",
+    "dir": "assets"
+  },
+  "templates": {
+    "common": "templates/*.html",
+    "pages": "pages/*.html"
+  }
+}

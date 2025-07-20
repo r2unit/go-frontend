@@ -1,10 +1,14 @@
 # Frontend Framework
 
-A Go framework for rendering frontend pages with dynamic route configuration.
+A Go framework for rendering frontend pages with dynamic route configuration, designed for a multi-repository architecture.
 
 ## Overview
 
 This framework allows you to create web applications with dynamically configured routes and handlers based on a JSON configuration file. It provides template rendering, static file serving, and middleware for handling 404 redirects.
+
+The framework is designed to be used in a multi-repository architecture:
+- **Framework Repository**: Contains the core framework code
+- **Template Repositories**: Contain templates, pages, assets, and route configuration
 
 ## Features
 
@@ -13,53 +17,72 @@ This framework allows you to create web applications with dynamically configured
 - Static file serving
 - 404 redirect middleware
 - Cookie policy support
+- Multi-repository architecture with automated builds
+- Docker containerization
 
-## Installation
+## Multi-Repository Architecture
 
-```bash
-go get github.com/nerdpitch-cloud/frontend
-```
+This framework is designed to be used in a multi-repository setup:
 
-## Usage
+1. **Framework Repository** (this repository):
+   - Contains the core framework code
+   - Provides the Go package for rendering templates and handling routes
+   - Includes the GitHub Workflow for automated builds
 
-### 1. Create a routes.json configuration file
+2. **Template Repositories**:
+   - Named with the pattern `frontend-*` (e.g., `frontend-website`, `frontend-blog`)
+   - Contain only templates, pages, assets, and route configuration
+   - No Go code required
+   - Automatically built into Docker containers using the framework
 
-```json
-{
-  "routes": [
-    {
-      "path": "/",
-      "template": "home",
-      "title": "Home Page",
-      "data": {
-        "showCookiePolicy": true
-      }
-    },
-    {
-      "path": "/about",
-      "template": "about",
-      "title": "About Us",
-      "data": {
-        "showCookiePolicy": true
-      }
-    }
-  ],
-  "static": {
-    "path": "/static/",
-    "dir": "assets"
-  },
-  "templates": {
-    "common": "templates/*.html",
-    "pages": "pages/*.html"
-  }
-}
-```
+### How It Works
 
-### 2. Create your templates
+When you push to a template repository:
+1. The GitHub Workflow detects if the repository name starts with `frontend-`
+2. If it does, it checks out both the template repository and the framework repository
+3. It combines them into a build directory
+4. It builds a Docker container and pushes it to GitHub Container Registry
 
-Create your HTML templates in the templates/ and pages/ directories.
+### Docker Images
 
-### 3. Use the framework in your application
+The framework uses a specific naming and tagging scheme for Docker images:
+
+#### Image Names
+
+Docker images are named after the repository name (without the organization prefix). For example, a repository named `nerdpitch-cloud/frontend-website` will produce a Docker image named `ghcr.io/frontend-website`.
+
+#### Tagging Strategy
+
+The framework uses Semantic Versioning for Docker image tags:
+
+1. **For the develop branch:**
+   - Format: `develop-[SemVer]` (e.g., `develop-1.2.3`)
+   - If no semantic versioning Git tags exist, fallback to `develop-[branch]-[sha]`
+
+2. **For other branches (including main):**
+   - Format: `[SemVer]` (e.g., `1.2.3`)
+   - If no semantic versioning Git tags exist, fallback to `[branch]-[sha]`
+   - The `latest` tag is also applied to images built from the main branch
+
+To use semantic versioning, create Git tags following the pattern `v1.2.3` in your repository.
+
+#### Container Metadata
+
+Each Docker image includes metadata that links it to the source GitHub repository:
+
+- `org.opencontainers.image.title`: The repository name
+- `org.opencontainers.image.description`: Description of the image
+- `org.opencontainers.image.source`: URL to the GitHub repository
+- `org.opencontainers.image.authors`: r2unit@proton.me
+- `org.opencontainers.image.vendor`: Nerdpitch Cloud
+
+## Creating a Template Repository
+
+To create a new frontend using this framework, see the [Template Repository Structure](docs/template-repository-structure.md) documentation.
+
+## Usage (Framework Development)
+
+If you're developing the framework itself, you can use it directly:
 
 ```go
 package main
@@ -93,18 +116,30 @@ func main() {
 
 ## Directory Structure
 
-The recommended directory structure for your project is:
+### Framework Repository
 
 ```
-your-project/
-├── assets/           # Static files (CSS, JS, images)
-├── config/           # Configuration files
-│   └── routes.json   # Route configuration
-├── pages/            # Page-specific templates
-├── templates/        # Common templates
-├── go.mod            # Go module file
-├── go.sum            # Go dependencies
-└── main.go           # Main application
+frontend-framework/
+├── .github/
+│   └── workflows/     # GitHub Workflows for automated builds
+├── pkg/
+│   └── framework/     # Framework code
+├── docs/              # Documentation
+├── go.mod             # Go module file
+├── go.sum             # Go dependencies
+├── main.go            # Main application
+└── dockerfile         # Dockerfile for building containers
+```
+
+### Template Repository
+
+```
+frontend-your-project/
+├── assets/            # Static files (CSS, JS, images)
+├── config/            # Configuration files
+│   └── routes.json    # Route configuration
+├── pages/             # Page-specific templates
+└── templates/         # Common templates
 ```
 
 ## License
