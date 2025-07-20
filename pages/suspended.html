@@ -1,0 +1,26 @@
+{{ define "contact" }}
+  {{ template "header.html" . }}
+
+<section class="wrapper bg-light">
+    <div class="container-card">
+        <div class="card image-wrapper bg-full bg-image mt-2 mb-5" data-image-src="static/img/photos/bg13.jpg">
+            <div class="card-body py-14 px-0">
+                <div class="container">
+                    <div class="row gx-md-8 gx-xl-12 gy-10 align-items-center text-center text-lg-start">
+                        <div class="col-lg-6" data-cues="slideInDown" data-group="page-title" data-delay="900">
+                            <h1 class="display-1 mb-4 me-xl-5 me-xxl-0 text-white">The cloud for the rest of us nerds 🤓</h1>
+                            <p class="lead fs-23 lh-sm mb-7 pe-xxl-15 text-navy">Build apps faster, make smarter business decisions, and connect people anywhere.</p>
+                            <a href="https://example.com" class="btn btn-white">Get in contact</a>
+                        </div>
+                        <div class="col-lg-6">
+                            <img class="img-fluid mb-n18" src="static/img/illustrations/3d10.png" srcset="static/img/illustrations/3d10@2x.png 2x" data-cue="fadeIn" data-delay="300" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  {{ template "footer.html" . }}
+{{ end }}

@@ -1,0 +1,88 @@
+{{ define "404" }}
+  {{ template "header.html" . }}
+
+  <style>
+    .terminal-container {
+      position: relative;
+      max-width: 600px;
+      margin: 60px auto; /* Extra spacing to separate from header and footer */
+      border: 2px solid #444; /* Border around the terminal box */
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      font-family: Menlo, Monaco, "Courier New", monospace;
+      background-color: #2d2d2d;
+    }
+    /* Overlay background with pattern (using the same image as in your footer snippet) */
+    .terminal-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-image: url('static/img/pattern.png');
+      background-size: cover;
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    .terminal-header {
+      background-color: #e0e0e0;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      z-index: 1;
+      position: relative;
+    }
+    .terminal-header .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .terminal-header .dot:first-child {
+      background-color: #ff605c;
+    }
+    .terminal-header .dot:nth-child(2) {
+      background-color: #ffbd44;
+    }
+    .terminal-header .dot:nth-child(3) {
+      background-color: #00ca4e;
+    }
+    .terminal-body {
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+      color: #f8f8f2;
+      background-color: transparent;
+      min-height: 200px;
+    }
+    .terminal-body h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .terminal-body p {
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+  </style>
+
+  <main>
+    <div class="terminal-container wrapper pattern-wrapper bg-image section-frame" data-image-src="static/img/pattern.png">
+      <div class="terminal-header">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="terminal-body">
+        <h1>Error 404</h1>
+        <p>
+Command Not Found.
+404 - The resource you are looking for cannot be found.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  {{ template "footer.html" . }}
+{{ end }}

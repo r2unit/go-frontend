@@ -1,0 +1,11 @@
+{{ define "contact" }}
+  {{ template "header.html" . }}
+  <main>
+      <h2>Contact Us</h2>
+      <p>You can reach us at <a href="mailto:contact@example.com">contact@example.com</a>.</p>
+  </main>
+  {{ if .ShowCookiePolicy }}
+      {{ template "cookiepolicy.html" . }}
+  {{ end }}
+  {{ template "footer.html" . }}
+{{ end }}
