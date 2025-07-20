@@ -1,10 +1,10 @@
-# Remote Repositories Workflow
+# Frontend Workflow
 
 This document explains the GitHub Workflow that builds frontend applications using templates, assets, pages, and configuration from remote repositories under the `/r2unit/` user.
 
 ## Overview
 
-The `build-from-remote-repos.yml` workflow is designed to:
+The `build-frontend-workflow.yml` workflow is designed to:
 
 1. Build the Go framework code
 2. Use templates, assets, pages, and configuration from multiple remote repositories
@@ -40,7 +40,7 @@ strategy:
   matrix:
     # Hardcoded list of repositories under the /r2unit/ user to check and build from
     repo: [
-      'frontend-main',
+      'frontend-example',
       'frontend-blog',
       'frontend-docs',
       'frontend-dashboard'

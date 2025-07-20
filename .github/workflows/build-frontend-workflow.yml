@@ -1,4 +1,4 @@
-name: Build Frontend from Remote Repositories
+name: Build Frontend Workflow
 
 on:
   schedule:
