@@ -17,7 +17,7 @@ This allows you to maintain a single framework codebase while having multiple fr
 
 The workflow:
 
-1. Runs on push to `main` and `develop` branches, or can be manually triggered
+1. Runs automatically every 24 hours at midnight UTC, or can be manually triggered
 2. Uses a matrix strategy to build from a hardcoded list of repositories under the `/r2unit/` user
 3. For each repository:
    - Checks out the framework repository (the current repo)
