@@ -1,0 +1,112 @@
+name: Build Frontend from Remote Repositories
+
+on:
+  schedule:
+    # Run every 24 hours at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      specific_repo:
+        description: 'Build only a specific repository (leave empty to build all)'
+        required: false
+        type: string
+
+jobs:
+  build-frontends:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Hardcoded list of repositories under the /r2unit/ user to check and build from
+        repo: [
+          'frontend-main',
+          'frontend-blog',
+          'frontend-docs',
+          'frontend-dashboard'
+          # Add more repositories as needed
+        ]
+      fail-fast: false  # Continue with other repos if one fails
+    
+    # Skip this repository if a specific repo was requested and it's not this one
+    if: ${{ !github.event.inputs.specific_repo || github.event.inputs.specific_repo == matrix.repo }}
+    
+    steps:
+      - name: Checkout framework repository
+        uses: actions/checkout@v3
+        with:
+          path: framework-repo
+
+      - name: Checkout remote template repository
+        uses: actions/checkout@v3
+        with:
+          repository: r2unit/${{ matrix.repo }}
+          path: template-repo
+          # If the repositories are private, you'll need to use a PAT
+          # token: ${{ secrets.REPO_ACCESS_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: Prepare build directory
+        run: |
+          # Create build directory
+          mkdir -p build
+          
+          # Copy framework code
+          cp -r framework-repo/pkg build/
+          cp framework-repo/main.go build/
+          cp framework-repo/go.mod build/
+          cp framework-repo/go.sum build/
+          
+          # Copy template files from the remote repository
+          mkdir -p build/templates build/pages build/assets build/config
+          cp -r template-repo/templates/* build/templates/ || true
+          cp -r template-repo/pages/* build/pages/ || true
+          cp -r template-repo/assets/* build/assets/ || true
+          cp template-repo/config/routes.json build/config/ || true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ matrix.repo }}
+          tags: |
+            # For develop branch, use develop-[semver] format if semver tags exist
+            type=semver,pattern=develop-{{version}},enable=${{ github.ref == 'refs/heads/develop' }}
+            # For other branches (including main), use [semver] format if semver tags exist
+            type=semver,pattern={{version}},enable=${{ github.ref != 'refs/heads/develop' }}
+            
+            # Fallback tags if no semver tags exist
+            # For develop branch, use develop-[branch]-[sha]
+            type=ref,event=branch,prefix=develop-,suffix=-{{sha}},enable=${{ github.ref == 'refs/heads/develop' }}
+            # For main branch, use [branch]-[sha]
+            type=ref,event=branch,suffix=-{{sha}},enable=${{ github.ref == 'refs/heads/main' }}
+            
+            # Add latest tag for main branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+          labels: |
+            org.opencontainers.image.title=${{ matrix.repo }}
+            org.opencontainers.image.description=Frontend application built with frontend-framework
+            org.opencontainers.image.source=https://github.com/r2unit/${{ matrix.repo }}
+            org.opencontainers.image.authors=r2unit@proton.me
+            org.opencontainers.image.vendor=r2unit
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: build
+          file: framework-repo/dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
